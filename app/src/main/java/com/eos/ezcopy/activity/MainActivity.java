@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -50,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void initData() {
+        Log.i("1xxxx", "main to init sp");
         PreferencesManager.initializeInstance(getApplicationContext());
         Set<String> textSet = new HashSet<String>();
         textSet.add("1111111");

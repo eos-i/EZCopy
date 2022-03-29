@@ -2,6 +2,7 @@ package com.eos.ezcopy.manager;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,6 +19,7 @@ public class PreferencesManager {
     }
 
     public static synchronized void initializeInstance(Context context) {
+        Log.i("1xxxx", "init sp");
         if (sInstance == null) {
             sInstance = new PreferencesManager(context);
             mContext = context;

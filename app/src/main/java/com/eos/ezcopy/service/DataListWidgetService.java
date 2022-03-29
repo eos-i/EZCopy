@@ -5,14 +5,17 @@ import static com.eos.ezcopy.provider.DataWidgetProvider.CLICK_ACTION;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Looper;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.eos.ezcopy.R;
+import com.eos.ezcopy.manager.PreferencesManager;
 import com.eos.ezcopy.provider.DataWidgetProvider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DataListWidgetService extends RemoteViewsService {
@@ -39,7 +42,7 @@ public class DataListWidgetService extends RemoteViewsService {
 
         public ListRemoteViewsFactory(Context context, Intent intent){
             mContext = context;
-            mList = DataWidgetProvider.getList();
+            mList = new ArrayList<>(PreferencesManager.getInstance().getTextDataList());
 
             if(Looper.myLooper() == null){
                 Looper.prepare();
@@ -69,20 +72,17 @@ public class DataListWidgetService extends RemoteViewsService {
             if(position<0 || position>=mList.size())
                 return null;
             String content = mList.get(position);
-            final RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_data_list);
+            RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_data_list);
             rv.setTextViewText(R.id.tv_copy_text, content);
 
             // 设置 第position位的“视图”对应的响应事件
             Intent fillInIntent = new Intent();
-            fillInIntent.putExtra("data", position);
+//            fillInIntent.putExtra("data", content);
+            fillInIntent.putExtra("id", position);
+            Bundle extras = new Bundle();
+            extras.putInt("data", position);
+            fillInIntent.putExtra("data1", extras);
             rv.setOnClickFillInIntent(R.id.tv_copy_text, fillInIntent);
-
-//            Intent intent = new Intent();
-//            Intent clickIntent = new Intent();
-//            clickIntent.setAction(CLICK_ACTION);
-//            PendingIntent pendingIntent = PendingIntent.getBroadcast(mContext, 0, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT);
-//            rv.setPendingIntentTemplate(R.id.tv_copy_text, pendingIntent);
-//            rv.setOnClickFillInIntent(R.id.tv_copy_text, intent);
             return rv;
         }
 
