@@ -1,11 +1,5 @@
 package com.eos.ezcopy.activity;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
-import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -14,9 +8,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.eos.ezcopy.R;
 import com.eos.ezcopy.databinding.ActivityMainBinding;
 import com.eos.ezcopy.manager.PreferencesManager;
+import com.eos.ezcopy.utils.CommonConstant;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -41,17 +41,12 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         binding.rvTextList.setLayoutManager(linearLayoutManager);
         MyRCTextAdapter myAdapter = new MyRCTextAdapter(dataList);
-        myAdapter.setOnItemClickListener(new  MyRCTextAdapter.MyOnClickListener() {
-            @Override
-            public void onClick() {
-                Toast.makeText(MainActivity.this, "點擊！！", Toast.LENGTH_SHORT).show();
-            }
-        });
+        myAdapter.setOnItemClickListener(() -> Toast.makeText(MainActivity.this, "點擊！！", Toast.LENGTH_SHORT).show());
         binding.rvTextList.setAdapter(myAdapter);
     }
 
     private void initData() {
-        Log.i("1xxxx", "main to init sp");
+        Log.i(CommonConstant.ONEXXXX, "main to init sp");
         PreferencesManager.initializeInstance(getApplicationContext());
         Set<String> textSet = new HashSet<String>();
         textSet.add("1111111");
@@ -66,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
 class MyRCTextAdapter extends RecyclerView.Adapter<MyRCTextAdapter.MyRCTextViewHolder> {
 
-    private List<String> textList;
+    private final List<String> textList;
 
     private MyOnClickListener listener;
 
@@ -81,21 +76,14 @@ class MyRCTextAdapter extends RecyclerView.Adapter<MyRCTextAdapter.MyRCTextViewH
     @NonNull
     @Override
     public MyRCTextAdapter.MyRCTextViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        MyRCTextAdapter.MyRCTextViewHolder viewHolder = new MyRCTextViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_widget_data_list, parent,false));
-        return viewHolder;
+        return new MyRCTextViewHolder(LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_widget_data_list, parent, false));
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyRCTextViewHolder holder, int position) {
         holder.itemText.setText(textList.get(position));
-//        holder.itemText.requestFocus();
-        holder.itemText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                listener.onClick();
-            }
-        });
+        holder.itemText.setOnClickListener(view -> listener.onClick());
     }
 
     @Override
