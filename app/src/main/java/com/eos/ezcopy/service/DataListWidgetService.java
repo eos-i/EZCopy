@@ -1,6 +1,5 @@
 package com.eos.ezcopy.service;
 
-import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
@@ -17,7 +16,7 @@ import java.util.List;
 public class DataListWidgetService extends RemoteViewsService {
 
     @Override
-    public void onStart(Intent intent, int startId){
+    public void onStart(Intent intent, int startId) {
         super.onCreate();
     }
 
@@ -31,15 +30,15 @@ public class DataListWidgetService extends RemoteViewsService {
         return new ListRemoteViewsFactory(this.getApplicationContext());
     }
 
-    static class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory{
+    static class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         private final Context mContext;
         private final List<String> mList;
 
-        public ListRemoteViewsFactory(Context context){
+        public ListRemoteViewsFactory(Context context) {
             mContext = context;
             mList = new ArrayList<>(PreferencesManager.getInstance().getTextDataList());
-            if(Looper.myLooper() == null){
+            if (Looper.myLooper() == null) {
                 Looper.prepare();
             }
         }
@@ -64,7 +63,7 @@ public class DataListWidgetService extends RemoteViewsService {
 
         @Override
         public RemoteViews getViewAt(int position) {
-            if(position<0 || position>=mList.size())
+            if (position < 0 || position >= mList.size())
                 return null;
             String content = mList.get(position);
             RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_data_list);
@@ -72,8 +71,7 @@ public class DataListWidgetService extends RemoteViewsService {
 
             //设置各个item对应的响应事件
             Intent fillInIntent = new Intent();
-//            fillInIntent.putExtra("data", content);
-            fillInIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, content);
+            fillInIntent.putExtra("data", content);
             rv.setOnClickFillInIntent(R.id.tv_copy_text, fillInIntent);
             return rv;
         }
