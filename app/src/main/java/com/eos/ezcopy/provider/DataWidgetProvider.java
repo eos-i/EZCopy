@@ -19,15 +19,13 @@ public class DataWidgetProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         super.onReceive(context, intent);
-        Log.i(CommonConstant.ONEXXXX, "onReceive");
         if (intent.getAction().equals(CLICK_ACTION)) {
-            Log.i(CommonConstant.ONEXXXX, "click action");
             String data = intent.getStringExtra("data");
             //将点击的内容进行复制
 //            ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
 //            ClipData mClipData = ClipData.newPlainText("Label", data);
 //            cm.setPrimaryClip(mClipData);
-            Log.i(CommonConstant.ONEXXXX, "复制成功 data = " + data);
+            Log.i(CommonConstant.ONEXXXX, "onReceive click action 复制成功 data = " + data);
         }
     }
 
