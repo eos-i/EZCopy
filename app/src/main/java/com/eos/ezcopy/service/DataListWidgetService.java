@@ -69,7 +69,7 @@ public class DataListWidgetService extends RemoteViewsService {
             RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_data_list);
             rv.setTextViewText(R.id.tv_copy_text, content);
 
-            //设置各个item对应的响应事件
+            //设置各个item对应的Intent
             Intent fillInIntent = new Intent();
             fillInIntent.putExtra("data", content);
             rv.setOnClickFillInIntent(R.id.tv_copy_text, fillInIntent);

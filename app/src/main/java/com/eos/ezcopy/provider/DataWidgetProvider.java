@@ -3,6 +3,8 @@ package com.eos.ezcopy.provider;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
@@ -22,9 +24,9 @@ public class DataWidgetProvider extends AppWidgetProvider {
         if (intent.getAction().equals(CLICK_ACTION)) {
             String data = intent.getStringExtra("data");
             //将点击的内容进行复制
-//            ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
-//            ClipData mClipData = ClipData.newPlainText("Label", data);
-//            cm.setPrimaryClip(mClipData);
+            ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData mClipData = ClipData.newPlainText("Label", data);
+            cm.setPrimaryClip(mClipData);
             Log.i(CommonConstant.ONEXXXX, "onReceive click action 复制成功 data = " + data);
         }
     }
@@ -55,7 +57,7 @@ public class DataWidgetProvider extends AppWidgetProvider {
         //  (2)然后在处理该“集合控件”的RemoteViewsFactory类的getViewAt()接口中 通过 setOnClickFillInIntent 设置“集合控件的某一项的数据”
         Intent listIntent = new Intent(context, DataWidgetProvider.class);
         listIntent.setAction(CLICK_ACTION);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, listIntent, PendingIntent.FLAG_IMMUTABLE);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, listIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         //设置intent模板
         remoteViews.setPendingIntentTemplate(R.id.lv_text_list, pendingIntent);
 
