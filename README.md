@@ -1,2 +1,2 @@
 # EZCopy
-使用RemoteViews写成的方便日常记录复制的小软件
+使用RemoteViews写成的一款方便日常文本复制的app
