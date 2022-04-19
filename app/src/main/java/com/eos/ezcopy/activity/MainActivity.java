@@ -74,15 +74,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void initData() {
         Log.i(CommonConstant.ONEXXXX, "main to init sp");
-        PreferencesManager.initializeInstance(getApplicationContext());
-        Set<String> textSet = new HashSet<String>();
-        textSet.add("1111111");
-        textSet.add("222222");
-        textSet.add("5555555555555555555555555555555555555555555555555555555555555555555555");
-        textSet.add("333333");
-        textSet.add("444444");
-        textSet.add("666666666666666666666666666666666666666666666666666666666666666666666666666666");
-        PreferencesManager.getInstance().setTextDataList(textSet);
+        Set<String> textSet = PreferencesManager.getInstance().getTextDataList();
+        if(textSet == null) {
+            textSet = new HashSet<>();
+            textSet.add("1111111");
+            textSet.add("222222");
+            textSet.add("5555555555555555555555555555555555555555555555555555555555555555555555");
+            textSet.add("333333");
+            textSet.add("444444");
+            textSet.add("666666666666666666666666666666666666666666666666666666666666666666666666666666");
+            PreferencesManager.getInstance().setTextDataList(textSet);
+        }
     }
 
     /**
