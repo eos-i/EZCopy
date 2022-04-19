@@ -1,5 +1,8 @@
 package com.eos.ezcopy.activity;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,7 +44,12 @@ public class MainActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         binding.rvTextList.setLayoutManager(linearLayoutManager);
         MyRCTextAdapter myAdapter = new MyRCTextAdapter(dataList);
-        myAdapter.setOnItemClickListener(() -> Toast.makeText(MainActivity.this, "點擊！！", Toast.LENGTH_SHORT).show());
+        myAdapter.setOnItemClickListener(data -> {
+            ClipboardManager cm = (ClipboardManager) MainActivity.this.getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData mClipData = ClipData.newPlainText("Label", data);
+            cm.setPrimaryClip(mClipData);
+            Toast.makeText(MainActivity.this, "已复制：" + data, Toast.LENGTH_SHORT).show();
+        });
         binding.rvTextList.setAdapter(myAdapter);
     }
 
@@ -83,7 +91,7 @@ class MyRCTextAdapter extends RecyclerView.Adapter<MyRCTextAdapter.MyRCTextViewH
     @Override
     public void onBindViewHolder(@NonNull MyRCTextViewHolder holder, int position) {
         holder.itemText.setText(textList.get(position));
-        holder.itemText.setOnClickListener(view -> listener.onClick());
+        holder.itemText.setOnClickListener(view -> listener.onClick(textList.get(position)));
     }
 
     @Override
@@ -102,6 +110,6 @@ class MyRCTextAdapter extends RecyclerView.Adapter<MyRCTextAdapter.MyRCTextViewH
     }
 
     interface MyOnClickListener {
-        void onClick();
+        void onClick(String data);
     }
 }
