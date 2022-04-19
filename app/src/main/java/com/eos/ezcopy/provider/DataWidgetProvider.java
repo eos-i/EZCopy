@@ -1,5 +1,6 @@
 package com.eos.ezcopy.provider;
 
+import android.annotation.SuppressLint;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 
 import com.eos.ezcopy.R;
 import com.eos.ezcopy.service.DataListWidgetService;
@@ -27,6 +29,7 @@ public class DataWidgetProvider extends AppWidgetProvider {
             ClipboardManager cm = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
             ClipData mClipData = ClipData.newPlainText("Label", data);
             cm.setPrimaryClip(mClipData);
+            Toast.makeText(context, "已复制：" + data, Toast.LENGTH_SHORT).show();
             Log.i(CommonConstant.ONEXXXX, "onReceive click action 复制成功 data = " + data);
         }
     }
