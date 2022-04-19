@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.os.Looper;
+import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.eos.ezcopy.R;
 import com.eos.ezcopy.manager.PreferencesManager;
+import com.eos.ezcopy.utils.CommonConstant;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,7 +70,8 @@ public class DataListWidgetService extends RemoteViewsService {
             String content = mList.get(position);
             RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_data_list);
             rv.setTextViewText(R.id.tv_copy_text, content);
-
+            Log.i(CommonConstant.ONEXXXX, "getViewAt = " + position);
+//            rv.setInt(R.id.tv_copy_text,"requestFocus",View.FOCUS_DOWN);
             //设置各个item对应的Intent
             Intent fillInIntent = new Intent();
             fillInIntent.putExtra("data", content);
