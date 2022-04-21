@@ -20,8 +20,8 @@
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:layout_marginStart="@dimen/dp_50"
-            android:layout_marginLeft="@dimen/dp_50"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginBottom="@dimen/dp_20"
             android:rotation="0">
         </Constraint>
         <Constraint
@@ -30,8 +30,8 @@
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:layout_marginStart="@dimen/dp_50"
-            android:layout_marginLeft="@dimen/dp_50">
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginBottom="@dimen/dp_20">
         </Constraint>
         <Constraint
             android:id="@+id/iv_btn_two"
@@ -39,8 +39,8 @@
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:layout_marginStart="@dimen/dp_50"
-            android:layout_marginLeft="@dimen/dp_50">
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginBottom="@dimen/dp_20">
         </Constraint>
     </ConstraintSet>
 
@@ -51,8 +51,8 @@
             motion:layout_constraintEnd_toEndOf="parent"
             android:layout_width="@dimen/dp_30"
             android:layout_height="@dimen/dp_30"
-            android:layout_marginStart="@dimen/dp_50"
-            android:layout_marginLeft="@dimen/dp_50"
+            android:layout_marginEnd="@dimen/dp_20"
+            android:layout_marginBottom="@dimen/dp_20"
             android:rotation="180">
         </Constraint>
         <Constraint

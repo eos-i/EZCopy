@@ -16,29 +16,17 @@
         android:id="@+id/iv_btn_one"
         android:layout_width="@dimen/dp_30"
         android:layout_height="@dimen/dp_30"
-        android:src="@drawable/compass"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="@dimen/dp_50"
-        android:layout_marginBottom="@dimen/dp_50" />
+        android:src="@drawable/compass" />
 
     <ImageView
         android:id="@+id/iv_btn_two"
         android:layout_width="@dimen/dp_30"
         android:layout_height="@dimen/dp_30"
-        android:src="@drawable/foursquare"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="@dimen/dp_50"
-        android:layout_marginBottom="@dimen/dp_50" />
+        android:src="@drawable/foursquare" />
 
     <ImageView
         android:id="@+id/iv_btn_add"
         android:layout_width="@dimen/dp_30"
         android:layout_height="@dimen/dp_30"
-        android:src="@drawable/camera"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginEnd="@dimen/dp_50"
-        android:layout_marginBottom="@dimen/dp_50" />
+        android:src="@drawable/camera" />
 </androidx.constraintlayout.motion.widget.MotionLayout>
