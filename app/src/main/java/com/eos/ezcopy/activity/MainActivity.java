@@ -86,9 +86,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @param newContent 新的数据
      */
     private void insertData(String newContent) {
-        Set<String> textSet = PreferencesManager.getInstance().getTextDataList();
-        textSet.add(newContent);
-        PreferencesManager.getInstance().setTextDataList(textSet);
+        Set<String> set = new HashSet<>(); // 重新创建一个set对象
+        Set<String> prefSet = PreferencesManager.getInstance().getTextDataList();
+        set.addAll(prefSet); // 将getStringSet返回的set添加进去而不是直接使用
+        set.add(newContent); // 新添加的数据
+        PreferencesManager.getInstance().setTextDataList(set);
         myAdapter.addData(newContent);
     }
 
