@@ -71,7 +71,8 @@ public class DataListWidgetService extends RemoteViewsService {
             RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_data_list);
             rv.setTextViewText(R.id.tv_copy_text, content);
             Log.i(CommonConstant.ONEXXXX, "getViewAt = " + position);
-//            rv.setInt(R.id.tv_copy_text,"requestFocus",View.FOCUS_DOWN);
+            //TODO:暂时不加
+            //rv.setInt(R.id.tv_copy_text,"requestFocus",View.FOCUS_DOWN);
             //设置各个item对应的Intent
             Intent fillInIntent = new Intent();
             fillInIntent.putExtra("data", content);

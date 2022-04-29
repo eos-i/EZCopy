@@ -3,11 +3,6 @@ package com.eos.ezcopy.activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -27,11 +22,8 @@ import com.eos.ezcopy.R;
 import com.eos.ezcopy.databinding.ActivityMainBinding;
 import com.eos.ezcopy.manager.PreferencesManager;
 import com.eos.ezcopy.utils.CommonConstant;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -75,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initData() {
         Log.i(CommonConstant.ONEXXXX, "main to init sp");
         Set<String> textSet = PreferencesManager.getInstance().getTextDataList();
-        if(textSet == null) {
+        if (textSet == null) {
             textSet = new HashSet<>();
             textSet.add("1111111");
             textSet.add("222222");

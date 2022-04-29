@@ -2,16 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ll_item_root"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="@dimen/dp_40"
+    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:paddingBottom="@dimen/dp_9">
 
     <TextView
         android:id="@+id/tv_copy_text"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:text="@string/app_name"
         android:textColor="@color/black"
         android:textSize="@dimen/sp_12"
         android:textStyle="bold"
+        android:background="@drawable/main_list_item_bg"
+        android:gravity="center_vertical"
+        android:paddingStart="@dimen/dp_10"
         android:singleLine="true"
         android:focusable="true"
         android:focusableInTouchMode="true"
