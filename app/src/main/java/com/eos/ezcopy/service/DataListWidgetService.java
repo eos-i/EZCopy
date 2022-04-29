@@ -17,6 +17,8 @@ import java.util.List;
 
 public class DataListWidgetService extends RemoteViewsService {
 
+    private static ListRemoteViewsFactory listRemoteViewsFactory;
+
     @Override
     public void onStart(Intent intent, int startId) {
         super.onCreate();
@@ -29,13 +31,18 @@ public class DataListWidgetService extends RemoteViewsService {
 
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
-        return new ListRemoteViewsFactory(this.getApplicationContext());
+        listRemoteViewsFactory = new ListRemoteViewsFactory(this.getApplicationContext());
+        return listRemoteViewsFactory;
+    }
+
+    public static ListRemoteViewsFactory getListRemoteViewsFactory() {
+        return listRemoteViewsFactory;
     }
 
     static class ListRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         private final Context mContext;
-        private final List<String> mList;
+        private List<String> mList;
 
         public ListRemoteViewsFactory(Context context) {
             mContext = context;
@@ -51,6 +58,7 @@ public class DataListWidgetService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
+            mList = new ArrayList<>(PreferencesManager.getInstance().getTextDataList());
         }
 
         @Override
@@ -71,7 +79,7 @@ public class DataListWidgetService extends RemoteViewsService {
             RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.item_widget_data_list);
             rv.setTextViewText(R.id.tv_copy_text, content);
             Log.i(CommonConstant.ONEXXXX, "getViewAt = " + position);
-            //TODO:暂时不加
+            //TODO:暂时不加widget中文字跑马灯效果
             //rv.setInt(R.id.tv_copy_text,"requestFocus",View.FOCUS_DOWN);
             //设置各个item对应的Intent
             Intent fillInIntent = new Intent();

@@ -1,7 +1,9 @@
 package com.eos.ezcopy.activity;
 
+import android.appwidget.AppWidgetManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.RemoteViewsService;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.eos.ezcopy.R;
 import com.eos.ezcopy.databinding.ActivityMainBinding;
 import com.eos.ezcopy.manager.PreferencesManager;
+import com.eos.ezcopy.provider.DataWidgetProvider;
+import com.eos.ezcopy.service.DataListWidgetService;
 import com.eos.ezcopy.utils.CommonConstant;
 
 import java.util.ArrayList;
@@ -67,7 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void initData() {
         Log.i(CommonConstant.ONEXXXX, "main to init sp");
         Set<String> textSet = PreferencesManager.getInstance().getTextDataList();
-        if (textSet == null) {
+        if (textSet == null || textSet.size() == 0) {
             textSet = new HashSet<>();
             textSet.add("1111111");
             textSet.add("222222");
@@ -86,12 +91,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      * @param newContent 新的数据
      */
     private void insertData(String newContent) {
+        //更新sp中的数据
         Set<String> set = new HashSet<>(); // 重新创建一个set对象
         Set<String> prefSet = PreferencesManager.getInstance().getTextDataList();
         set.addAll(prefSet); // 将getStringSet返回的set添加进去而不是直接使用
         set.add(newContent); // 新添加的数据
         PreferencesManager.getInstance().setTextDataList(set);
+        //更新list中的数据并更新UI
         myAdapter.addData(newContent);
+        //更新widget中的数据
+        final AppWidgetManager mgr = AppWidgetManager.getInstance(this);
+        final ComponentName cn = new ComponentName(this, DataWidgetProvider.class);
+        // 调用数据添加
+        RemoteViewsService.RemoteViewsFactory factory = DataListWidgetService.getListRemoteViewsFactory();
+        factory.onDataSetChanged();
+        // 这句话会调用RemoteViewSerivce中RemoteViewsFactory的onDataSetChanged()方法。
+        mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn),
+                R.id.lv_text_list);
     }
 
     @Override
