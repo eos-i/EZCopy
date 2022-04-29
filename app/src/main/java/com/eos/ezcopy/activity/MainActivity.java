@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             textSet.add("333333");
             textSet.add("444444");
             textSet.add("666666666666666666666666666666666666666666666666666666666666666666666666666666");
+            textSet.add("777");
             PreferencesManager.getInstance().setTextDataList(textSet);
         }
     }
