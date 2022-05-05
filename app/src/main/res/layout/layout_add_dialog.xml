@@ -23,7 +23,7 @@
         android:id="@+id/et_add_content"
         android:layout_width="0dp"
         android:layout_height="@dimen/dp_200"
-        android:text="@string/app_name"
+        android:hint="请输入文字"
         android:gravity="top"
         android:layout_marginTop="@dimen/dp_10"
         android:background="@drawable/main_edit_bg"
