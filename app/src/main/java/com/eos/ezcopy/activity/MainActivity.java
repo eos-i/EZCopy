@@ -43,6 +43,9 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //单击选中，双击复制，三击修改
+    //单击复制，双击修改
+    //需要区分单击后focus变化
     private ActivityMainBinding binding = null;
     private MyRCTextAdapter myAdapter;
 
@@ -51,15 +54,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        if (!EventBus.getDefault().isRegistered(this)) {
-            EventBus.getDefault().register(this);
-        }
         initEvent();
         initData();
         initAdapter();
     }
 
     private void initEvent() {
+        //注册EventBus
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         binding.ivBtnAdd.setOnClickListener(this);
         binding.ivBtnOne.setOnClickListener(this);
         binding.ivBtnTwo.setOnClickListener(this);
@@ -234,7 +238,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 showAddDialog();
                 break;
             case R.id.iv_btn_two:
-                Toast.makeText(this, "其他功能", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "说明", Toast.LENGTH_SHORT).show();
+                showInstructions();
                 break;
             default:
                 break;
@@ -251,13 +256,27 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView title = view.findViewById(R.id.tv_add_title);
         TextView confirm = view.findViewById(R.id.tv_add_btn);
         EditText content = view.findViewById(R.id.et_add_content);
-        view.findViewById(R.id.tv_add_btn).setOnClickListener(view1 -> {
+        confirm.setOnClickListener(view1 -> {
             String newContent = content.getText().toString();
             if (newContent.length() == 0) {
                 Toast.makeText(MainActivity.this, "文本为空！", Toast.LENGTH_SHORT).show();
             } else {
                 insertData(newContent);
             }
+            mDialog.dismiss();
+        });
+    }
+
+    private void showInstructions() {
+        AlertDialog mDialog = new AlertDialog.Builder(this).create();
+        View view = getLayoutInflater().inflate(R.layout.dialog_instructions, null);
+        Objects.requireNonNull(mDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+        mDialog.setView(view);
+        mDialog.setCancelable(true);
+        mDialog.show();
+        TextView title = view.findViewById(R.id.tv_add_title);
+        TextView confirm = view.findViewById(R.id.tv_confirm_btn);
+        confirm.setOnClickListener(view1 -> {
             mDialog.dismiss();
         });
     }

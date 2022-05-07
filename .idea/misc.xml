@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/main_edit_bg.xml" value="0.375" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.43645833333333334" />
         <entry key="app/src/main/res/layout/data_list_widget.xml" value="0.5286458333333334" />
+        <entry key="app/src/main/res/layout/dialog_instructions.xml" value="0.44583333333333336" />
         <entry key="app/src/main/res/layout/item_widget_data_list.xml" value="0.384375" />
         <entry key="app/src/main/res/layout/layout_add_dialog.xml" value="0.5286458333333334" />
       </map>
