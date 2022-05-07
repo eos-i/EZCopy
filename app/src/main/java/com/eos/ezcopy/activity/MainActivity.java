@@ -7,28 +7,35 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.RemoteViewsService;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.eos.ezcopy.R;
+import com.eos.ezcopy.adapter.MyRCTextAdapter;
+import com.eos.ezcopy.bean.ItemDeleteEvent;
+import com.eos.ezcopy.bean.ItemMoveEvent;
 import com.eos.ezcopy.databinding.ActivityMainBinding;
+import com.eos.ezcopy.helper.MyItemHelperCallback;
 import com.eos.ezcopy.manager.PreferencesManager;
 import com.eos.ezcopy.provider.DataWidgetProvider;
 import com.eos.ezcopy.service.DataListWidgetService;
 import com.eos.ezcopy.utils.CommonConstant;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -44,6 +51,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        if (!EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().register(this);
+        }
         initEvent();
         initData();
         initAdapter();
@@ -91,6 +101,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         binding.rvTextList.setAdapter(myAdapter);
+        //设置ItemTouchHelper.Callback
+        MyItemHelperCallback callback = new MyItemHelperCallback();
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(binding.rvTextList);
     }
 
     private void showModifyDialog(int position) {
@@ -106,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EditText content = view.findViewById(R.id.et_add_content);
         view.findViewById(R.id.tv_add_btn).setOnClickListener(view1 -> {
             String newContent = content.getText().toString();
-            if(newContent.length() == 0) {
+            if (newContent.length() == 0) {
                 Toast.makeText(MainActivity.this, "文本为空！", Toast.LENGTH_SHORT).show();
             } else {
                 modifyData(position, newContent);
@@ -115,6 +129,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    /**
+     * 修改item
+     */
     private void modifyData(int position, String newContent) {
         //更新sp中的数据
         Set<String> set = new HashSet<>();
@@ -125,46 +142,85 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         set.addAll(list);
         //将getStringSet返回的set添加进去而不是直接使用
         PreferencesManager.getInstance().setTextDataList(set);
-        //更新list中的数据并更新UI
+        //更新应用内数据列表
         myAdapter.modifyData(position, newContent);
-        //更新widget中的数据
-        final AppWidgetManager mgr = AppWidgetManager.getInstance(this);
-        final ComponentName cn = new ComponentName(this, DataWidgetProvider.class);
-        //刷新数据
-        RemoteViewsService.RemoteViewsFactory factory = DataListWidgetService.getListRemoteViewsFactory();
-        if(factory != null) {
-            factory.onDataSetChanged();
-        }
-        //这句话会调用RemoteViewSerivce中RemoteViewsFactory的onDataSetChanged()方法。
-        mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn),
-                R.id.lv_text_list);
+        //更新widget列表数据
+        updateWidgetData();
     }
 
     /**
-     * 更新list和sp的数据
-     *
-     * @param newContent 新的数据
+     * 新增item
      */
     private void insertData(String newContent) {
         //更新sp中的数据
-        Set<String> set = new HashSet<>(); // 重新创建一个set对象
+        //重新创建一个set对象
+        Set<String> set = new HashSet<>();
+        //获取原有数据set
         Set<String> prefSet = PreferencesManager.getInstance().getTextDataList();
-        set.addAll(prefSet); // 将getStringSet返回的set添加进去而不是直接使用
-        set.add(newContent); // 新添加的数据
+        //将getStringSet返回的set添加进去而不是直接使用
+        set.addAll(prefSet);
+        //新添加的数据
+        set.add(newContent);
         PreferencesManager.getInstance().setTextDataList(set);
-        //更新list中的数据并更新UI
+        //更新应用内数据列表
         myAdapter.addData(newContent);
+        //更新widget列表数据
+        updateWidgetData();
+    }
+
+    /**
+     * 移动item
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void moveData(ItemMoveEvent event) {
+        int srcPosition = event.getSrcPosition();
+        int dstPosition = event.getDstPosition();
+        //更新sp数据
+        Set<String> set = new HashSet<>();
+        Set<String> preSet = PreferencesManager.getInstance().getTextDataList();
+        List<String> list = new ArrayList<>(preSet);
+        Collections.swap(list, srcPosition, dstPosition);
+        set.addAll(list);
+        PreferencesManager.getInstance().setTextDataList(set);
+        //更新应用内数据列表
+        myAdapter.moveData(srcPosition, dstPosition);
+        //更新widget列表数据
+        updateWidgetData();
+    }
+
+    /**
+     * 删除item
+     */
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void deleteData(ItemDeleteEvent event) {
+        //更新sp数据
+        int position = event.getPosition();
+        Set<String> set = new HashSet<>();
+        Set<String> preSet = PreferencesManager.getInstance().getTextDataList();
+        List<String> list = new ArrayList<>(preSet);
+        list.remove(position);
+        set.addAll(list);
+        PreferencesManager.getInstance().setTextDataList(set);
+        //更新应用内列表数据
+        myAdapter.deleteData(position);
+        //更新widget列表数据
+        updateWidgetData();
+    }
+
+    /**
+     * 更新widget列表数据，全局更新
+     */
+    private void updateWidgetData() {
         //更新widget中的数据
         final AppWidgetManager mgr = AppWidgetManager.getInstance(this);
         final ComponentName cn = new ComponentName(this, DataWidgetProvider.class);
-        // 调用数据添加
+        //调用数据添加
         RemoteViewsService.RemoteViewsFactory factory = DataListWidgetService.getListRemoteViewsFactory();
-        if(factory != null) {
+        if (factory != null) {
             factory.onDataSetChanged();
         }
-        // 这句话会调用RemoteViewSerivce中RemoteViewsFactory的onDataSetChanged()方法。
-        mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn),
-                R.id.lv_text_list);
+        //下面这句话会调用RemoteViewService中RemoteViewsFactory的onDataSetChanged()方法
+        mgr.notifyAppWidgetViewDataChanged(mgr.getAppWidgetIds(cn), R.id.lv_text_list);
     }
 
     @Override
@@ -197,7 +253,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         EditText content = view.findViewById(R.id.et_add_content);
         view.findViewById(R.id.tv_add_btn).setOnClickListener(view1 -> {
             String newContent = content.getText().toString();
-            if(newContent.length() == 0) {
+            if (newContent.length() == 0) {
                 Toast.makeText(MainActivity.this, "文本为空！", Toast.LENGTH_SHORT).show();
             } else {
                 insertData(newContent);
@@ -205,66 +261,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             mDialog.dismiss();
         });
     }
-}
-
-class MyRCTextAdapter extends RecyclerView.Adapter<MyRCTextAdapter.MyRCTextViewHolder> {
-
-    private final List<String> textList;
-
-    private MyOnClickListener listener;
-
-    public void setOnItemClickListener(MyOnClickListener listener) {
-        this.listener = listener;
-    }
-
-    public MyRCTextAdapter(List<String> textList) {
-        this.textList = textList;
-    }
-
-    @NonNull
-    @Override
-    public MyRCTextAdapter.MyRCTextViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new MyRCTextViewHolder(LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_widget_data_list, parent, false));
-    }
 
     @Override
-    public void onBindViewHolder(@NonNull MyRCTextViewHolder holder, int position) {
-        holder.itemText.setText(textList.get(position));
-        holder.itemText.setOnClickListener(view -> listener.onClick(textList.get(position)));
-        holder.itemText.setOnLongClickListener(v -> {
-            listener.onLongClick(position);
-            return false;
-        });
-    }
-
-    @Override
-    public int getItemCount() {
-        return textList.size();
-    }
-
-    static class MyRCTextViewHolder extends RecyclerView.ViewHolder {
-
-        TextView itemText;
-
-        public MyRCTextViewHolder(@NonNull View itemView) {
-            super(itemView);
-            itemText = itemView.findViewById(R.id.tv_copy_text);
+    protected void onDestroy() {
+        super.onDestroy();
+        if (EventBus.getDefault().isRegistered(this)) {
+            EventBus.getDefault().unregister(this);
         }
-    }
-
-    public void addData(String data) {
-        textList.add(data);
-        notifyItemInserted(textList.size() - 1);
-    }
-
-    public void modifyData(int position, String newContent) {
-        textList.set(position, newContent);
-        notifyItemChanged(position);
-    }
-
-    interface MyOnClickListener {
-        void onClick(String data);
-        void onLongClick(int position);
     }
 }
