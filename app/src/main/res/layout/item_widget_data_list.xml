@@ -7,6 +7,14 @@
     android:gravity="center_vertical"
     android:paddingBottom="@dimen/dp_9">
 
+    <!-- 请求有触摸获取焦点的能力，在xml中的配置是android:focusableInTouchMode="true"
+         现在的手机都是触摸模式(TouchMode)，当你触摸一个控件的时会获取焦点。
+         有些控件是默认不具有触摸获取焦点的功能，Button、TextView、LinearLayout等是默认没有触摸获取焦点功能的。
+         为什么会有这种问题呢？
+         原因是这些控件有时候会想要先响应点击事件，如果触摸获取焦点功能打开后，当你点一下，默认是不会调用点击事件的，
+         会先让这个控件获取焦点，触发OnFocusChangeListener，获取焦点后点击才会触发点击事件。
+         EditText是默认有触摸获取焦点功能的，并将第一抢先获取焦点，因此页面有EditText的时默认有光标，键盘弹出。
+         -->
     <TextView
         android:id="@+id/tv_copy_text"
         android:layout_width="match_parent"

@@ -43,9 +43,6 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //单击选中，双击复制，三击修改
-    //单击复制，双击修改
-    //需要区分单击后focus变化
     private ActivityMainBinding binding = null;
     private MyRCTextAdapter myAdapter;
 
@@ -64,7 +61,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (!EventBus.getDefault().isRegistered(this)) {
             EventBus.getDefault().register(this);
         }
-        binding.ivBtnAdd.setOnClickListener(this);
+        binding.ivBtnEnum.setOnClickListener(this);
         binding.ivBtnOne.setOnClickListener(this);
         binding.ivBtnTwo.setOnClickListener(this);
     }
@@ -89,7 +86,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         List<String> dataList = new ArrayList<>(PreferencesManager.getInstance().getTextDataList());
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
         binding.rvTextList.setLayoutManager(linearLayoutManager);
-        myAdapter = new MyRCTextAdapter(dataList);
+        myAdapter = new MyRCTextAdapter(this, dataList);
         myAdapter.setOnItemClickListener(new MyRCTextAdapter.MyOnClickListener() {
             @Override
             public void onClick(String data) {
@@ -100,7 +97,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
 
             @Override
-            public void onLongClick(int position) {
+            public void onDoubleClick(int position) {
                 showModifyDialog(position);
             }
         });
@@ -109,28 +106,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MyItemHelperCallback callback = new MyItemHelperCallback();
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(callback);
         itemTouchHelper.attachToRecyclerView(binding.rvTextList);
-    }
-
-    private void showModifyDialog(int position) {
-        AlertDialog mDialog = new AlertDialog.Builder(this).create();
-        View view = getLayoutInflater().inflate(R.layout.layout_add_dialog, null);
-        Objects.requireNonNull(mDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.setView(view);
-        mDialog.setCancelable(true);
-        mDialog.show();
-        TextView title = view.findViewById(R.id.tv_add_title);
-        TextView confirm = view.findViewById(R.id.tv_add_btn);
-        title.setText("修改条目");
-        EditText content = view.findViewById(R.id.et_add_content);
-        view.findViewById(R.id.tv_add_btn).setOnClickListener(view1 -> {
-            String newContent = content.getText().toString();
-            if (newContent.length() == 0) {
-                Toast.makeText(MainActivity.this, "文本为空！", Toast.LENGTH_SHORT).show();
-            } else {
-                modifyData(position, newContent);
-            }
-            mDialog.dismiss();
-        });
     }
 
     /**
@@ -230,7 +205,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
-            case R.id.iv_btn_add:
+            case R.id.iv_btn_enum:
                 Toast.makeText(this, "变换", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.iv_btn_one:
@@ -239,7 +214,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.iv_btn_two:
                 Toast.makeText(this, "说明", Toast.LENGTH_SHORT).show();
-                showInstructions();
+                showInstructionsDialog();
                 break;
             default:
                 break;
@@ -267,7 +242,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void showInstructions() {
+    /**
+     * 操作说明：
+     *     单击复制
+     *     双击修改
+     *     长按移动
+     *     左滑删除
+     *     左滑与单击存在冲突，解bug
+     */
+    private void showInstructionsDialog() {
         AlertDialog mDialog = new AlertDialog.Builder(this).create();
         View view = getLayoutInflater().inflate(R.layout.dialog_instructions, null);
         Objects.requireNonNull(mDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
@@ -277,6 +260,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView title = view.findViewById(R.id.tv_add_title);
         TextView confirm = view.findViewById(R.id.tv_confirm_btn);
         confirm.setOnClickListener(view1 -> {
+            mDialog.dismiss();
+        });
+    }
+
+    private void showModifyDialog(int position) {
+        AlertDialog mDialog = new AlertDialog.Builder(this).create();
+        View view = getLayoutInflater().inflate(R.layout.layout_add_dialog, null);
+        Objects.requireNonNull(mDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+        mDialog.setView(view);
+        mDialog.setCancelable(true);
+        mDialog.show();
+        TextView title = view.findViewById(R.id.tv_add_title);
+        TextView confirm = view.findViewById(R.id.tv_add_btn);
+        title.setText("修改条目");
+        EditText content = view.findViewById(R.id.et_add_content);
+        confirm.setOnClickListener(view1 -> {
+            String newContent = content.getText().toString();
+            if (newContent.length() == 0) {
+                Toast.makeText(MainActivity.this, "文本为空！", Toast.LENGTH_SHORT).show();
+            } else {
+                modifyData(position, newContent);
+            }
             mDialog.dismiss();
         });
     }

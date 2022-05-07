@@ -27,7 +27,7 @@
         android:src="@drawable/foursquare" />
 
     <ImageView
-        android:id="@+id/iv_btn_add"
+        android:id="@+id/iv_btn_enum"
         android:layout_width="@dimen/dp_30"
         android:layout_height="@dimen/dp_30"
         android:src="@drawable/camera" />
