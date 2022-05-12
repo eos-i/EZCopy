@@ -8,7 +8,6 @@ plugins {
     //kotlin扩展功能
     //id 'kotlin-android-extensions'
 }
-apply plugin: 'kotlin-android'
 
 //配置项目构件的各种属性
 android {
