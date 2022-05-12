@@ -22,13 +22,21 @@
     <TextView
         android:id="@+id/tv_instructions"
         android:layout_width="0dp"
-        android:layout_height="@dimen/dp_200"
+        android:layout_height="wrap_content"
         android:text="  11111"
         android:layout_marginTop="@dimen/dp_10"
         android:layout_marginHorizontal="@dimen/dp_20"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_add_title" />
+
+    <com.felipecsl.gifimageview.library.GifImageView
+        android:id="@+id/giv_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/tv_instructions"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
     <TextView
         android:id="@+id/tv_confirm_btn"
@@ -42,6 +50,6 @@
         android:background="@drawable/btn_ok_bg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_instructions"
+        app:layout_constraintTop_toBottomOf="@+id/giv_add"
         android:layout_marginTop="@dimen/dp_20" />
 </androidx.constraintlayout.widget.ConstraintLayout>

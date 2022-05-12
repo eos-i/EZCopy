@@ -1,5 +1,6 @@
 package com.eos.ezcopy.activity;
 
+import android.annotation.SuppressLint;
 import android.appwidget.AppWidgetManager;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RemoteViewsService;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -29,17 +31,22 @@ import com.eos.ezcopy.manager.PreferencesManager;
 import com.eos.ezcopy.provider.DataWidgetProvider;
 import com.eos.ezcopy.service.DataListWidgetService;
 import com.eos.ezcopy.utils.CommonConstant;
+import com.felipecsl.gifimageview.library.GifImageView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -242,28 +249,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    /**
-     * 操作说明：
-     *     单击复制
-     *     双击修改
-     *     长按移动
-     *     左滑删除
-     *     左滑与单击存在冲突，解bug
-     */
-    private void showInstructionsDialog() {
-        AlertDialog mDialog = new AlertDialog.Builder(this).create();
-        View view = getLayoutInflater().inflate(R.layout.dialog_instructions, null);
-        Objects.requireNonNull(mDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
-        mDialog.setView(view);
-        mDialog.setCancelable(true);
-        mDialog.show();
-        TextView title = view.findViewById(R.id.tv_add_title);
-        TextView confirm = view.findViewById(R.id.tv_confirm_btn);
-        confirm.setOnClickListener(view1 -> {
-            mDialog.dismiss();
-        });
-    }
-
     private void showModifyDialog(int position) {
         AlertDialog mDialog = new AlertDialog.Builder(this).create();
         View view = getLayoutInflater().inflate(R.layout.layout_add_dialog, null);
@@ -284,6 +269,59 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
             mDialog.dismiss();
         });
+    }
+
+    /**
+     * 操作说明：
+     * 单击复制
+     * 双击修改
+     * 长按移动
+     * 左滑删除
+     * 左滑与单击存在冲突，解bug
+     */
+    private void showInstructionsDialog() {
+        AlertDialog mDialog = new AlertDialog.Builder(this).create();
+        View view = getLayoutInflater().inflate(R.layout.dialog_instructions, null);
+        Objects.requireNonNull(mDialog.getWindow()).setBackgroundDrawableResource(android.R.color.transparent);
+        mDialog.setView(view);
+        mDialog.setCancelable(true);
+        mDialog.show();
+        TextView title = view.findViewById(R.id.tv_add_title);
+        TextView confirm = view.findViewById(R.id.tv_confirm_btn);
+        GifImageView addGif = view.findViewById(R.id.giv_add);
+        showAddGif(addGif);
+        confirm.setOnClickListener(view1 -> {
+            mDialog.dismiss();
+        });
+    }
+
+    @SuppressLint("ResourceType")
+    private void showAddGif(GifImageView gifImageView) {
+        gifImageView.setScaleType(ImageView.ScaleType.CENTER);
+        try {
+            gifImageView.setBytes(steamToByte(getResources().openRawResource(R.drawable.delete)));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        gifImageView.startAnimation();
+
+//        gifImageView.setBytes(byte[] bytes); //传入gif图片内容，以byte[]形式传入
+//
+//        gifImageView.startAnimation(); //开始播放gif图
+//
+//        gifImageView.stopAnimation(); //暂停播放gif图
+//
+//        gifImageView.isAnimating(); //判断gif图是否正在播放中
+    }
+
+    public static byte[] steamToByte(InputStream input) throws IOException{
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        int len;
+        byte[] b = new byte[1024];
+        while ((len = input.read(b, 0, b.length)) != -1) {
+            baos.write(b, 0, len);
+        }
+        return baos.toByteArray();
     }
 
     @Override
